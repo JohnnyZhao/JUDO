@@ -2,6 +2,7 @@
 This file demonstrates writing tests using the unittest module. These will pass
 when you run "manage.py test".
 This line is added for testing
+This line added from zhaoyu.johnny@gmail.com
 Replace this with more appropriate tests for your application.
 """
 
