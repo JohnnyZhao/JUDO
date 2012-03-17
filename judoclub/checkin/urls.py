@@ -8,9 +8,9 @@ urlpatterns = patterns('checkin.views',
     url(r'^create_userprofile/(?P<user_id>[\d]+)/$', 'create_userprofile', name='create_userprofile'),
     url(r'^update_userprofile/(?P<profile_id>[\d]+)/$', 'update_userprofile', name='update_userprofile'),
 
-    url(r'^create_user_award/$', 'create_user_award', name='create_user_award'),
-    url(r'^update_user_award/(?P<user_id>[\d]+)/$', 'update_user_award', name='update_user_award'),
-    url(r'^delete_user_award/(?P<user_id>[\d]+)/$', 'delete_user_award', name='delete_user_award'),
+  #  url(r'^create_user_award/(?P<user_id>[\d]+)/$', 'create_user_award', name='create_user_award'),
+  #  url(r'^update_user_award/(?P<user_id>[\d]+)/$', 'update_user_award', name='update_user_award'),
+  #  url(r'^delete_user_award/(?P<user_id>[\d]+)/$', 'delete_user_award', name='delete_user_award'),
 
 
     url(r'^create_course/$', 'create_course', name='create_course'),

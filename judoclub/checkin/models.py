@@ -62,6 +62,7 @@ class StudentCourse(models.Model):
 class UserCheckin(models.Model):
     user = models.ForeignKey(User)
     time = models.DateTimeField()
+    course = models.ForeignKey(Course)
     checkin = models.BooleanField(default=False)
 
 class UserHonor(models.Model):

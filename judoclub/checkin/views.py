@@ -3,15 +3,15 @@
 from django.shortcuts import render_to_response as render, get_object_or_404, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
-from checkin.models import UserProfile
-from checkin.forms import JudoUserForm, JudoUserProfileForm
+from checkin.models import UserProfile, UserCheckin
+from checkin.forms import JudoUserForm, JudoUserProfileForm, CourseForm, StudentCourseForm
 from django.contrib.auth.forms import UserCreationForm
 
 SUCCESS = 1
 FAIL = 0
 
 def create_user(request):
-    if request.method = "GET":
+    if request.method == "GET":
         user_form = UserCreationForm()
         context = RequestContext(request, {'user_form': user_form})
     else:
@@ -48,8 +48,8 @@ def delete_user(request, user_id):
 
 def create_userprofile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    if request.method = "GET":
-        user_profile_form = JudoUserProfileForm(initial={user=user})
+    if request.method == "GET":
+        user_profile_form = JudoUserProfileForm(initial={"user": user})
     else:
         user_profile_form = JudoUserProfileForm(request.POST)
         if user_profile_form.is_valid():
@@ -71,7 +71,7 @@ def update_userprofile(request, userprofile_id):
 
 # Here are something needed to change for assign certain student by default
 def create_student_course(request):
-    if request.method = "GET":
+    if request.method == "GET":
         student_course_form = StudentCourseForm()
         context = RequestContext(request, {'student_course_form': student_course_form})
     else:
@@ -82,9 +82,6 @@ def create_student_course(request):
         else:
             context = RequestContext(request, {'student_course_form': student_course_form})
     return render('checkin/create_student_course.html', context)
-
-
-    pass
 
 def update_student_course(request, studentcourse_id):
     student_course = get_object_or_404(StudentCourse, id=studentcourse_id)
@@ -109,7 +106,7 @@ def delete_student_course(request, studentcourse_id):
     return render_json(result)
 
 def create_course(request):
-    if request.method = "GET":
+    if request.method == "GET":
         course_form = CourseForm()
         context = RequestContext(request, {'course_form': course_form})
     else:
@@ -142,6 +139,15 @@ def delete_course(request, course_id):
         print e
     return render_json(result)
 
+def create_user_award(request):
+    pass
+
+def update_user_award(request):
+    pass
+
+def delete_user_award(request):
+    pass
+
 def checkin(request, user_id, course_id):
     result["status"] = FAIL
     checkin_time = request.GET.get("checkin_time")
@@ -163,7 +169,8 @@ def checkin(request, user_id, course_id):
 def checkin_history(request):
     checkin_date = request.GET.get('checkin_date')
     checkin_course = request.GET.get('checkin_course')
-    checkin = Checkin.objects.get(checkin_time__date=checkin_date, course=checkin_course)
+    # datetime.date
+    checkin = UserCheckin.objects.filter(time=checkin_date, course=checkin_course)
     context = RequestContext(request, {'checkin': checkin})
     return render('checkin/history.html', context)
 
