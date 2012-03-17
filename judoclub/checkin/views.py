@@ -9,22 +9,30 @@ from django.contrib.auth.forms import UserCreationForm
 SUCCESS = 1
 FAIL = 0
 
-def create_update_user(request, update_id=None):
-    # update_id is a user.id
-    if update_id:
-        user = get_object_or_404(User, id=update_id)
+def create_user(request):
+    if request.method = "GET":
+        user_form = UserCreationForm()
+        context = RequestContext(request, {'user_form': user_form})
     else:
-        user = None
-    user_form = UserCreationForm(instance=user)
+        user_form = UserCreationForm(request.POST)
+        if user_form.is_valid():
+            user = user_form.save()
+            context = RequestContext(request, {'user_form': user_form, 'user': user})
+        else:
+            context = RequestContext(request, {'user_form': user_form})
+    return render('checkin/create_user.html', context)
+        
+
+def update_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == "GET":
+        user_form = UserCreationForm(instance=user)
     if request.method == "POST":
         user_form = UserCreationForm(request.POST, instance=user)
         if user_form.is_valid():
             user = user_form.save()
-            profile_form = JudoUserProfileForm(initial={"user":user})
-            context = RequestContext(request, {"user":user, "profile_form": profile_form})
-            return render('checkin/create_update_userprofile.html', context)
-    context = RequestContext(request, {"user": user, "user_form": user_form})
-    return render('checkin/create_update_user.html', context)
+    context = RequestContext(request, {"user":user, "user_form": user_form})
+    return render('checkin/update_user.html', context)
             
 def delete_user(request, user_id):
     result["status"] = FAIL
@@ -36,25 +44,125 @@ def delete_user(request, user_id):
         print e
     return render_json(result)
 
-def create_update_userprofile(request, update_id=None):
-    # update_id is a user.id
-    profile = get_object_or_404(UserProfile, user__id=update_id)
+
+def create_userprofile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method = "GET":
+        user_profile_form = JudoUserProfileForm(initial={user=user})
+    else:
+        user_profile_form = JudoUserProfileForm(request.POST)
+        if user_profile_form.is_valid():
+            user_profile = user_profile_form.save()
+    context = RequestContext(request, {'user_profile_form': user_profile_form, "user": user})
+    return render('checkin/create_user_profile.html', context)
+
+def update_userprofile(request, userprofile_id):
+    profile = get_object_or_404(UserProfile, id=userprofile_id)
     profile_form = JudoUserProfileForm(request.POST, instance=profile) 
- 
+    if request.method == "GET":
+        profile_form = JudoUserProfileForm(instance=user)
+    if request.method == "POST":
+        profile_form = JudoUserProfileForm(request.POST, instance=user)
+        if profile_form.is_valid():
+            profile = profile_form.save()
+    context = RequestContext(request, {"profile": profile, "profile_form": profile_form})
+    return render('checkin/update_user_profile.html', context)
+
+# Here are something needed to change for assign certain student by default
 def create_student_course(request):
+    if request.method = "GET":
+        student_course_form = StudentCourseForm()
+        context = RequestContext(request, {'student_course_form': student_course_form})
+    else:
+        student_course_form = StudentCourseForm(request.POST)
+        if student_course_form.is_valid():
+            student_course = student_course_form.save()
+            context = RequestContext(request, {'student_course_form': student_course_form, 'student_course': student_course})
+        else:
+            context = RequestContext(request, {'student_course_form': student_course_form})
+    return render('checkin/create_student_course.html', context)
+
+
     pass
 
 def update_student_course(request, studentcourse_id):
-    pass
+    student_course = get_object_or_404(StudentCourse, id=studentcourse_id)
+    student_course_form = StudentCourseForm(request.POST, instance=student_course) 
+    if request.method == "GET":
+        student_course_form = StudentCourseForm(instance=student_course)
+    if request.method == "POST":
+        student_course_form = StudentCourseForm(request.POST, instance=student_course)
+        if student_course_form.is_valid():
+            student_course = student_course_form.save()
+    context = RequestContext(request, {"student_course": student_course, "student_course_form": student_course_form})
+    return render('checkin/update_student_course.html', context)
 
 def delete_student_course(request, studentcourse_id):
-    pass
+    result["status"] = FAIL
+    try:
+        student_course = StudentCourse.objects.get(id=course_id)
+        student_course.delete()
+        result["status"] = SUCCESS
+    except StudentCourse.DoesNotExist as e:
+        print e
+    return render_json(result)
 
-def create_update_course(request, update_id=None):
-    pass
+def create_course(request):
+    if request.method = "GET":
+        course_form = CourseForm()
+        context = RequestContext(request, {'course_form': course_form})
+    else:
+        course_form = CourseForm(request.POST)
+        if course_form.is_valid():
+            course = course_form.save()
+            context = RequestContext(request, {'course_form': course_form, 'course': course})
+        else:
+            context = RequestContext(request, {'course_form': course_form})
+    return render('checkin/create_course.html', context)
+
+def update_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.method == "GET":
+        course_form = CourseForm(instance=course)
+    if request.method == "POST":
+        course_form = CourseForm(request.POST, instance=course)
+        if course_form.is_valid():
+            course = course_form.save()
+    context = RequestContext(request, {"course": course, "course_form": course_form})
+    return render('checkin/update_course.html', context)
 
 def delete_course(request, course_id):
-    pass
+    result["status"] = FAIL
+    try:
+        course = Course.objects.get(id=course_id)
+        course.delete()
+        result["status"] = SUCCESS
+    except Course.DoesNotExist as e:
+        print e
+    return render_json(result)
 
 def checkin(request, user_id, course_id):
-    pass
+    result["status"] = FAIL
+    checkin_time = request.GET.get("checkin_time")
+    try:
+        user = User.objects.get(id=user_id)
+        course = User.objects.get(id=course_id)
+    except User.DoesNotExist as e:
+        pass
+    except Course.DoesNotExist as e:
+        pass
+    try:
+        checkin = Checkin(user=user, course=course, time=checkin_time)
+        checkin.save()
+        result["status"] = SUCCESS
+    except:
+        pass
+
+# multiple choices for checkin_date and checkin_course        
+def checkin_history(request):
+    checkin_date = request.GET.get('checkin_date')
+    checkin_course = request.GET.get('checkin_course')
+    checkin = Checkin.objects.get(checkin_time__date=checkin_date, course=checkin_course)
+    context = RequestContext(request, {'checkin': checkin})
+    return render('checkin/history.html', context)
+

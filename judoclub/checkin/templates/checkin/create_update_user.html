@@ -1,8 +1,0 @@
-{% load i18n %}
-<form action="" method="POST">
-    {% csrf_token %}
-    <table>
-        {{user_form.as_table}}
-    </table>
-<input type="submit" value="{% trans 'register' %}"></input>
-</form>
