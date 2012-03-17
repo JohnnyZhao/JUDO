@@ -1,0 +1,8 @@
+{% load i18n %}
+<form action="" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ profile_form }}
+    </table>
+    <input type="submit" value="{% trans 'Submit' %}">
+</form>

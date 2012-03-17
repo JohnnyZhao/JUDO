@@ -1,0 +1,13 @@
+<div id="update-user">
+    {{ person }}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+            <tbody>
+                {{ user_form.as_table }}
+            </tbody>
+        </table>
+        <input type="submit" value="Submit"/>
+    </form>
+</div>
+
