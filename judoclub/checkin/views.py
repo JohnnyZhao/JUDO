@@ -1,11 +1,11 @@
 # Create your views here.
-#This line is added for test merge
 from django.shortcuts import render_to_response as render, get_object_or_404, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
 from checkin.models import UserProfile, UserCheckin
 from checkin.forms import JudoUserForm, JudoUserProfileForm, CourseForm, StudentCourseForm
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.models import User
 
 SUCCESS = 1
 FAIL = 0
@@ -18,21 +18,21 @@ def create_user(request):
         user_form = UserCreationForm(request.POST)
         if user_form.is_valid():
             user = user_form.save()
-            context = RequestContext(request, {'user_form': user_form, 'user': user})
+            context = RequestContext(request, {'user_form': user_form, 'person': user})
         else:
             context = RequestContext(request, {'user_form': user_form})
     return render('checkin/create_user.html', context)
-        
 
 def update_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == "GET":
-        user_form = UserCreationForm(instance=user)
+        user_form = PasswordChangeForm(user=user)
     if request.method == "POST":
-        user_form = UserCreationForm(request.POST, instance=user)
+        user_form = PasswordChangeForm(request.POST)
         if user_form.is_valid():
-            user = user_form.save()
-    context = RequestContext(request, {"user":user, "user_form": user_form})
+            user_form.save()
+    print updated_user.username
+    context = RequestContext(request, {"person":user, "user_form": user_form})
     return render('checkin/update_user.html', context)
             
 def delete_user(request, user_id):
@@ -49,12 +49,12 @@ def delete_user(request, user_id):
 def create_userprofile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == "GET":
-        user_profile_form = JudoUserProfileForm(initial={"user": user})
+        user_profile_form = JudoUserProfileForm(initial={"person": user})
     else:
         user_profile_form = JudoUserProfileForm(request.POST)
         if user_profile_form.is_valid():
             user_profile = user_profile_form.save()
-    context = RequestContext(request, {'user_profile_form': user_profile_form, "user": user})
+    context = RequestContext(request, {'user_profile_form': user_profile_form, "person": user})
     return render('checkin/create_user_profile.html', context)
 
 def update_userprofile(request, userprofile_id):
@@ -69,10 +69,10 @@ def update_userprofile(request, userprofile_id):
     context = RequestContext(request, {"profile": profile, "profile_form": profile_form})
     return render('checkin/update_user_profile.html', context)
 
-# Here are something needed to change for assign certain student by default
-def create_student_course(request):
+def create_student_course(request, user_id):
+    user = get_object_or_404(User, id=user_id)
     if request.method == "GET":
-        student_course_form = StudentCourseForm()
+        student_course_form = StudentCourseForm(initial={'person': user})
         context = RequestContext(request, {'student_course_form': student_course_form})
     else:
         student_course_form = StudentCourseForm(request.POST)
@@ -139,14 +139,39 @@ def delete_course(request, course_id):
         print e
     return render_json(result)
 
-def create_user_award(request):
-    pass
+def create_user_award(request, user_id):
+    if request.method == "GET":
+        user_award_form = UserAwardForm()
+        context = RequestContext(request, {'user_award_form': user_award_form})
+    else:
+        user_award_form = UserAwardForm(request.POST)
+        if user_award_form.is_valid():
+            user_award = user_award_form.save()
+            context = RequestContext(request, {'user_award_form': user_award_form, 'user_award': user_award})
+        else:
+            context = RequestContext(request, {'user_award_form': user_award_form})
+    return render('checkin/create_user_award.html', context)
 
-def update_user_award(request):
-    pass
+def update_user_award(request, award_id):
+    user_award = get_object_or_404(UserAward, id=award_id)
+    if request.method == "GET":
+        user_award_form = UserAwardForm(instance=user_award)
+    if request.method == "POST":
+        user_award_form = UserAwardForm(request.POST, instance=user_award)
+        if user_award_form.is_valid():
+            user_award = user_award_form.save()
+    context = RequestContext(request, {"user_award": user_award, "user_award_form": user_award_form})
+    return render('checkin/update_course.html', context)
 
-def delete_user_award(request):
-    pass
+def delete_user_award(request, award_id):
+    result["status"] = FAIL
+    try:
+        user_award = UserAward.objects.get(id=award_id)
+        user_award.delete()
+        result["status"] = SUCCESS
+    except UserAward.DoesNotExist as e:
+        print e
+    return render_json(result)
 
 def checkin(request, user_id, course_id):
     result["status"] = FAIL
