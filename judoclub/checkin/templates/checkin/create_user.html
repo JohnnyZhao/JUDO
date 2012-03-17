@@ -1,15 +1,29 @@
 <head>
+<link rel="stylesheet" type="text/css" href="/static/css/checkin.css" />
 </head>
 <html>
-    <div id="create-user">
-        <form action="" method="post">
-            {% csrf_token %}
-        <table>
-            <tbody>
-                {{ user_form.as_table }}
-            </tbody>
-        </table>
-        <input type="submit" value="Submit"/>
-        </form>
+    <div id="container">
+        <div id="page-head">
+            <div id="logo">
+                <img height="100" src="/static/img/logo.png" />
+            </div>
+        </div>
+        
+        <div id="page-body">
+            <div id="create-user">
+                <form action="" method="post">
+                    {% csrf_token %}
+                <table>
+                    <tbody>
+                        {{ user_form.as_table }}
+                    </tbody>
+                </table>
+                <input type="submit" value="Submit"/>
+                </form>
+            </div>
+        </div>
+
+        <div id="page-footer">
+        </div>
     </div>
 </html>

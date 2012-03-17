@@ -1,0 +1,11 @@
+html{
+    background: #e9f4e9;
+}
+
+#container{
+    width: 50%;
+    margin-left: 25%;
+    background: #FFFFFF;    
+    position: relative;
+    top: -8px;
+}
