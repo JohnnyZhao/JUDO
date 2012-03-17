@@ -5,7 +5,8 @@ from django.forms import ModelForm
 
 class JudoUserForm(ModelForm):
     class Meta:
-       model = User  
+        model = User  
+
 
 class JudoUserProfileForm(ModelForm):
     class Meta:
