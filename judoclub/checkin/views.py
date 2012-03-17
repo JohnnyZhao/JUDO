@@ -1,4 +1,5 @@
 # Create your views here.
+#This line is added for test merge
 from django.shortcuts import render_to_response as render, get_object_or_404, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
