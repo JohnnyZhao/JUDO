@@ -42,6 +42,7 @@ class UserProfile(models.Model):
     objects = CustomerUserManager()
 
 class Course(models.Model):
+    name = models.CharField(max_length=100)
     group = models.CharField(max_length=1, choices=GROUP_CHOICES)
     start_date = models.DateField()
     end_date = models.DateField()

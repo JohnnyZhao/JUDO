@@ -2,11 +2,12 @@
 from django.shortcuts import render_to_response as render, get_object_or_404, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
-from checkin.models import UserProfile, UserCheckin, Course, UserHonor, StudentCourse
+from checkin.models import UserProfile, UserCheckin, Course, UserHonor, StudentCourse, UserCheckin
 from checkin.forms import JudoUserForm, JudoUserProfileForm, CourseForm, StudentCourseForm, UserAwardForm
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from common import render_json
+from datetime import datetime
 SUCCESS = 1
 FAIL = 0
 
@@ -177,28 +178,33 @@ def delete_user_award(request, award_id):
     return render_json(result)
 
 def checkin(request, user_id, course_id):
-    result {"status": FAIL}
-    checkin_time = request.GET.get("checkin_time")
+    result = {"status": FAIL}
+    checkin_time = datetime.now()
     try:
         user = User.objects.get(id=user_id)
-        course = User.objects.get(id=course_id)
+        course = Course.objects.get(id=course_id)
+        if not user.userprofile.is_coach:
+            studentcourse = StudentCourse.objects.get(student=user, course=course) 
     except User.DoesNotExist as e:
-        pass
+        print e
     except Course.DoesNotExist as e:
-        pass
+        print e
+    except StudentCourse.DoesNotExist as e:
+        print e
     try:
-        checkin = Checkin(user=user, course=course, time=checkin_time)
+        checkin = UserCheckin(user=user, course=course, time=checkin_time)
         checkin.save()
         result["status"] = SUCCESS
-    except:
-        pass
+    except Exception as e:
+        print e
+    return render_json(result)
 
 # multiple choices for checkin_date and checkin_course        
 def checkin_history(request):
-    checkin_date = request.GET.get('checkin_date')
-    checkin_course = request.GET.get('checkin_course')
-    # datetime.date
-    checkin = UserCheckin.objects.filter(time=checkin_date, course=checkin_course)
-    context = RequestContext(request, {'checkin': checkin})
+   # checkin_date = request.GET.get('checkin_date')
+   # checkin_course = request.GET.get('checkin_course') 
+    checkin_date = datetime.today()
+    checkins = UserCheckin.objects.filter(time__year=checkin_date.year, time__month=checkin_date.month, time__day=checkin_date.day)
+    context = RequestContext(request, {'checkins': checkins})
     return render('checkin/history.html', context)
 
