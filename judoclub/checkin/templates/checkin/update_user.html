@@ -1,3 +1,8 @@
+{% extends 'checkin/create_user.html' %}
+
+{% load i18n %}
+
+{% block page-body %}
 <div id="update-user">
     {{ person }}
     <form action="" method="post">
@@ -10,4 +15,4 @@
         <input type="submit" value="Submit"/>
     </form>
 </div>
-
+{% endblock page-body %}

@@ -1,6 +1,11 @@
-{% for checkin in checkins %}
-{{ checkin.time }}
-{{ checkin.course }}
-{{ checkin.user }}
-{% endfor %}
+{% extends 'checkin/create_user.html' %}
 
+{% load i18n %}
+
+{% block page-body %}
+    {% for checkin in checkins %}
+    {{ checkin.time }}
+    {{ checkin.course }}
+    {{ checkin.user }}
+    {% endfor %}
+{% endblock page-body %}

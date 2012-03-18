@@ -1,4 +1,8 @@
+{% extends 'checkin/create_user.html' %}
+
 {% load i18n %}
+
+{% block page-body %}
 <form action="" method="POST">
     {% csrf_token %}
     <table>
@@ -6,3 +10,4 @@
     </table>
     <input type="submit" value="{% trans 'Submit' %}">
 </form>
+{% endblock page-body %}
